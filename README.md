@@ -1,14 +1,7 @@
-# ModelHub
-
-Here’s a full GitHub-ready `README.md` for your **ModelHub MCP** server:
-
----
-
-````markdown
 # 🧠 ModelHub MCP
 
 **One protocol to find, compare, and run any AI model.**  
-An open MCP server that aggregates free/public AI tools like HuggingFace Spaces, Replicate, and Stability SDKs into a unified interface for agents.
+An open MCP server that aggregates AI tools from HuggingFace, Replicate, Stability AI, OpenAI, Claude, and Gemini into a unified interface for agents.
 
 ---
 
@@ -16,8 +9,8 @@ An open MCP server that aggregates free/public AI tools like HuggingFace Spaces,
 
 ModelHub MCP is a **Model Context Protocol (MCP) server** that lets AI agents:
 
-- 🔍 **Discover** models from platforms like HuggingFace, Replicate, Stability AI, and more.
-- ⚖️ **Compare** model capabilities and performance via unified metadata.
+- 🔍 **Discover** models from platforms like HuggingFace, Replicate, Stability AI, OpenAI, Claude, and Gemini.
+- ⚖️ **Compare** model capabilities, performance, cost, and multimodal features via unified metadata.
 - 🧪 **Run inference** instantly with a consistent `inferenceRunner` tool.
 - 📎 **Fetch live demo links**, usage stats, tags, and model descriptions.
 
@@ -26,6 +19,7 @@ Perfect for:
 - 🤖 LLM agents needing external model access
 - 🧪 AI researchers and builders testing models
 - 🧰 Developer tools looking to integrate model search & execution
+- 💰 Cost optimization and model selection
 
 ---
 
@@ -33,27 +27,27 @@ Perfect for:
 
 ### `inferenceRunner`
 
-Runs inference on a given model (HuggingFace, Replicate, etc.) with optional inputs.
+Runs inference on a given model with optional inputs and modality specification.
 
 ```json
 {
-  "modelId": "stability-ai/sdxl",
-  "provider": "huggingface",
+  "modelId": "gpt-4",
+  "provider": "openai",
   "input": {
     "prompt": "An astronaut riding a unicorn on Mars"
-  }
+  },
+  "modality": "text"
 }
 ```
-````
 
 ### `compareModels`
 
-Compares multiple models based on tags, modality (text, image, audio), latency, and cost.
+Compares multiple models based on various metrics including cost and multimodal capabilities.
 
 ```json
 {
-  "models": ["stability-ai/sdxl", "runwayml/stable-diffusion-v1-5"],
-  "metrics": ["latency", "modality", "popularity"]
+  "models": ["gpt-4", "claude-3-opus", "gemini-pro"],
+  "metrics": ["latency", "modality", "popularity", "cost", "capabilities"]
 }
 ```
 
@@ -93,8 +87,28 @@ npm run dev
 
 - Node.js 18+
 - MCP SDK for TypeScript
-- Access to HuggingFace Hub API & Replicate API (optional)
+- Access to various AI provider APIs:
+  - HuggingFace Hub API
+  - Replicate API
+  - Stability AI API
+  - OpenAI API
+  - Anthropic API (Claude)
+  - Google AI API (Gemini)
 - Axios, Express, dotenv, and other standard libraries
+
+---
+
+## 🔑 Environment Variables
+
+```env
+PORT=3000
+HUGGINGFACE_API_KEY=your_huggingface_api_key
+REPLICATE_API_KEY=your_replicate_api_key
+STABILITY_API_KEY=your_stability_api_key
+OPENAI_API_KEY=your_openai_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+GOOGLE_API_KEY=your_google_api_key
+```
 
 ---
 

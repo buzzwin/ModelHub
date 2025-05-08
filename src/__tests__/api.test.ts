@@ -83,40 +83,95 @@ describe('API Endpoints', () => {
   });
 
   describe('POST /compare', () => {
-    it('should return comparison result', async () => {
+    it('should compare models successfully', async () => {
       const mockResult = [
         {
-          id: 'test-model-1',
-          latency: 1000,
-          modality: 'text-generation',
-          popularity: 500
-        }
+          id: 'gpt-4',
+          modality: 'text',
+          cost: {
+            input: 0.03,
+            output: 0.06,
+          },
+          capabilities: {
+            text: true,
+            image: true,
+            audio: false,
+            video: false,
+            multimodal: true,
+          },
+        },
       ];
+
       mockedCompareModels.mockResolvedValueOnce(mockResult);
 
       const response = await request(app)
         .post('/compare')
         .send({
-          models: ['test-model-1'],
-          metrics: ['latency', 'modality', 'popularity']
+          models: ['gpt-4'],
+          metrics: ['modality', 'cost', 'capabilities'],
         });
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockResult);
+      expect(mockedCompareModels).toHaveBeenCalledWith({
+        models: ['gpt-4'],
+        metrics: ['modality', 'cost', 'capabilities'],
+      });
     });
 
-    it('should handle errors', async () => {
-      mockedCompareModels.mockRejectedValueOnce(new Error('API Error'));
+    it('should handle invalid metrics', async () => {
+      const response = await request(app)
+        .post('/compare')
+        .send({
+          models: ['gpt-4'],
+          metrics: ['invalid-metric'],
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body.error).toContain('Invalid metrics');
+    });
+
+    it('should handle empty models array', async () => {
+      const response = await request(app)
+        .post('/compare')
+        .send({
+          models: [],
+          metrics: ['cost'],
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body.error).toContain('models must be a non-empty array');
+    });
+
+    it('should handle empty metrics array', async () => {
+      const response = await request(app)
+        .post('/compare')
+        .send({
+          models: ['gpt-4'],
+          metrics: [],
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body.error).toContain('metrics must be a non-empty array');
+    });
+
+    it('should handle comparison errors', async () => {
+      mockedCompareModels.mockRejectedValueOnce(new Error('Comparison failed'));
 
       const response = await request(app)
         .post('/compare')
         .send({
-          models: ['test-model-1'],
-          metrics: ['latency', 'modality', 'popularity']
+          models: ['gpt-4'],
+          metrics: ['cost'],
         });
 
       expect(response.status).toBe(500);
-      expect(response.body).toEqual({ error: 'API Error' });
+      expect(response.body).toHaveProperty('error');
+      expect(response.body).toHaveProperty('details');
+      expect(response.body.details).toBe('Comparison failed');
     });
   });
 
