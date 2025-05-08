@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModelHub MCP Tester</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">ModelHub MCP Tester</h1>
+        
+        <!-- Tabs -->
+        <div class="flex justify-center mb-8">
+            <button class="tab-btn px-4 py-2 mx-2 bg-blue-500 text-white rounded" data-tab="inference">Inference</button>
+            <button class="tab-btn px-4 py-2 mx-2 bg-blue-500 text-white rounded" data-tab="compare">Compare Models</button>
+            <button class="tab-btn px-4 py-2 mx-2 bg-blue-500 text-white rounded" data-tab="demo">Demo URL</button>
+        </div>
+
+        <!-- Inference Tab -->
+        <div id="inference" class="tab-content active bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Run Model Inference</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Provider</label>
+                    <select id="inference-provider" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="huggingface">HuggingFace</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="claude">Claude</option>
+                        <option value="gemini">Gemini</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Model ID</label>
+                    <input type="text" id="inference-model" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="e.g., gpt-4">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Modality</label>
+                    <select id="inference-modality" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="text">Text</option>
+                        <option value="image">Image</option>
+                        <option value="audio">Audio</option>
+                        <option value="video">Video</option>
+                        <option value="multimodal">Multimodal</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Input</label>
+                    <textarea id="inference-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="4" placeholder="Enter your input here..."></textarea>
+                </div>
+                <button onclick="runInference()" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Run Inference</button>
+                <div id="inference-result" class="mt-4 p-4 bg-gray-50 rounded hidden"></div>
+            </div>
+        </div>
+
+        <!-- Compare Tab -->
+        <div id="compare" class="tab-content bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Compare Models</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Models (comma-separated)</label>
+                    <input type="text" id="compare-models" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="e.g., gpt-4, claude-3-opus, gemini-pro">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Metrics</label>
+                    <div class="mt-2 space-y-2">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" class="form-checkbox" value="latency" checked>
+                            <span class="ml-2">Latency</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" class="form-checkbox" value="modality" checked>
+                            <span class="ml-2">Modality</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" class="form-checkbox" value="popularity" checked>
+                            <span class="ml-2">Popularity</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" class="form-checkbox" value="cost" checked>
+                            <span class="ml-2">Cost</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" class="form-checkbox" value="capabilities" checked>
+                            <span class="ml-2">Capabilities</span>
+                        </label>
+                    </div>
+                </div>
+                <button onclick="compareModels()" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Compare Models</button>
+                <div id="compare-result" class="mt-4 p-4 bg-gray-50 rounded hidden"></div>
+            </div>
+        </div>
+
+        <!-- Demo URL Tab -->
+        <div id="demo" class="tab-content bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Fetch Demo URL</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Provider</label>
+                    <select id="demo-provider" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="huggingface">HuggingFace</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="claude">Claude</option>
+                        <option value="gemini">Gemini</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Model ID</label>
+                    <input type="text" id="demo-model" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="e.g., gpt-4">
+                </div>
+                <button onclick="fetchDemoURL()" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Fetch Demo URL</button>
+                <div id="demo-result" class="mt-4 p-4 bg-gray-50 rounded hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('bg-blue-600'));
+                button.classList.add('bg-blue-600');
+                
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+
+        // API calls
+        async function runInference() {
+            const provider = document.getElementById('inference-provider').value;
+            const modelId = document.getElementById('inference-model').value;
+            const modality = document.getElementById('inference-modality').value;
+            const input = document.getElementById('inference-input').value;
+
+            try {
+                const response = await fetch('/inference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        modelId,
+                        provider,
+                        input: JSON.parse(input),
+                        modality
+                    })
+                });
+
+                const result = await response.json();
+                const resultDiv = document.getElementById('inference-result');
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+                resultDiv.classList.remove('hidden');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function compareModels() {
+            const models = document.getElementById('compare-models').value.split(',').map(m => m.trim());
+            const metrics = Array.from(document.querySelectorAll('.form-checkbox:checked')).map(cb => cb.value);
+
+            try {
+                const response = await fetch('/compare', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ models, metrics })
+                });
+
+                const result = await response.json();
+                const resultDiv = document.getElementById('compare-result');
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+                resultDiv.classList.remove('hidden');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function fetchDemoURL() {
+            const provider = document.getElementById('demo-provider').value;
+            const modelId = document.getElementById('demo-model').value;
+
+            try {
+                const response = await fetch('/demo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ modelId, provider })
+                });
+
+                const result = await response.json();
+                const resultDiv = document.getElementById('demo-result');
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+                resultDiv.classList.remove('hidden');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html> 

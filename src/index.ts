@@ -1,43 +1,26 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import { inferenceRunner } from './tools/inferenceRunner';
-import { compareModels } from './tools/compareModels';
-import { fetchDemoURL } from './tools/fetchDemoURL';
-
-dotenv.config();
+import path from 'path';
+import inferenceRouter from './routes/inference';
+import compareRouter from './routes/compare';
+import demoRouter from './routes/demo';
 
 const app = express();
+const port = process.env.PORT || 3000;
+
+// Middleware
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Routes
-app.post('/inference', async (req, res) => {
-  try {
-    const result = await inferenceRunner(req.body);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+app.use('/inference', inferenceRouter);
+app.use('/compare', compareRouter);
+app.use('/demo', demoRouter);
+
+// Serve index.html for the root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-app.post('/compare', async (req, res) => {
-  try {
-    const result = await compareModels(req.body);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/demo', async (req, res) => {
-  try {
-    const result = await fetchDemoURL(req.body);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 }); 
