@@ -18,13 +18,19 @@ ModelHub MCP is a server that provides a common interface for working with diffe
 modelhub-mcp/
 ├── src/
 │   ├── index.ts              # Main server file
+│   ├── routes/              # API route handlers
+│   │   ├── inference.ts     # Inference endpoint
+│   │   ├── compare.ts       # Compare endpoint
+│   │   └── demo.ts          # Demo URL endpoint
 │   └── tools/
 │       ├── inferenceRunner.ts # Handles model inference
 │       ├── compareModels.ts   # Compares different models
 │       └── fetchDemoURL.ts    # Gets demo URLs for models
-├── src/__tests__/           # Test files
-├── package.json             # Project configuration
-└── tsconfig.json           # TypeScript configuration
+├── public/                  # Static files for web interface
+│   └── index.html          # Web UI
+├── src/__tests__/          # Test files
+├── package.json            # Project configuration
+└── tsconfig.json          # TypeScript configuration
 ```
 
 ## Setting Up the Project
@@ -211,6 +217,94 @@ This code:
 - Fetches the appropriate demo URL
 - Handles different providers' URL structures
 
+## Web Interface
+
+The project includes a modern web interface for testing all functionality. The UI is built with HTML, JavaScript, and Tailwind CSS, providing an intuitive way to interact with the API.
+
+### Features
+
+1. **Tabbed Interface**
+
+   - Separate tabs for inference, model comparison, and demo URL fetching
+   - Clean, modern design using Tailwind CSS
+   - Responsive layout for desktop and mobile
+
+2. **Inference Testing**
+
+   - Provider selection (HuggingFace, OpenAI, Claude, Gemini)
+   - Model ID input
+   - Modality selection (text, image, audio, video, multimodal)
+   - JSON input field for model-specific parameters
+   - Real-time response display
+
+3. **Model Comparison**
+
+   - Multiple model input with comma separation
+   - Metric selection via checkboxes
+   - Comprehensive comparison results display
+   - Support for all comparison metrics
+
+4. **Demo URL Testing**
+   - Provider selection
+   - Model ID input
+   - Direct link to model demos
+   - Error handling for invalid inputs
+
+### Implementation
+
+The UI is implemented in `public/index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ModelHub MCP Tester</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Tab navigation -->
+    <div class="flex justify-center mb-8">
+      <button class="tab-btn" data-tab="inference">Inference</button>
+      <button class="tab-btn" data-tab="compare">Compare Models</button>
+      <button class="tab-btn" data-tab="demo">Demo URL</button>
+    </div>
+
+    <!-- Tab content -->
+    <div id="inference" class="tab-content active">
+      <!-- Inference form -->
+    </div>
+    <div id="compare" class="tab-content">
+      <!-- Comparison form -->
+    </div>
+    <div id="demo" class="tab-content">
+      <!-- Demo URL form -->
+    </div>
+  </body>
+</html>
+```
+
+### Usage
+
+1. Start the server:
+
+```bash
+npm run dev
+```
+
+2. Open your browser and navigate to `http://localhost:3000`
+
+3. Use the interface to:
+   - Run model inference with different providers
+   - Compare multiple models with various metrics
+   - Fetch demo URLs for models
+
+The UI provides immediate feedback and error handling, making it easy to test and debug the API functionality.
+
 ## Testing the Code
 
 We use Jest for testing. Here's an example test for the model comparison:
@@ -321,6 +415,7 @@ GOOGLE_API_KEY=your_google_api_key
 5. **API Design**: Shows how to design a clean, consistent API
 6. **Cost Management**: Demonstrates how to track and compare model costs
 7. **Multimodal Support**: Shows how to handle different types of AI model inputs and outputs
+8. **Web Interface**: Learn how to create a user-friendly testing interface
 
 ## Common Pitfalls and Solutions
 
@@ -345,18 +440,25 @@ GOOGLE_API_KEY=your_google_api_key
    - Handle different pricing models for different providers
 
 5. **Multimodal Support**
+
    - Validate input/output modalities
    - Handle provider-specific modality requirements
+
+6. **UI Development**
+   - Use a CSS framework for consistent styling
+   - Implement proper error handling and user feedback
+   - Make the interface responsive for all devices
 
 ## Next Steps
 
 1. Add more model providers
 2. Implement caching for better performance
 3. Add rate limiting
-4. Create a web interface
+4. Enhance the web interface with more features
 5. Add more metrics for model comparison
 6. Implement cost optimization strategies
 7. Add support for more modalities
+8. Add user authentication for the web interface
 
 ## Conclusion
 
@@ -369,6 +471,7 @@ This project demonstrates how to create a unified interface for different AI mod
 - Project structure
 - Cost management
 - Multimodal support
+- Web interface development
 
 By understanding this code, you'll have a solid foundation for building more complex AI integration projects.
 
@@ -381,3 +484,4 @@ By understanding this code, you'll have a solid foundation for building more com
 - [OpenAI API Documentation](https://platform.openai.com/docs/api-reference)
 - [Anthropic API Documentation](https://docs.anthropic.com/claude/reference/getting-started-with-the-api)
 - [Google AI API Documentation](https://ai.google.dev/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)

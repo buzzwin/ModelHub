@@ -64,6 +64,34 @@ Returns a public link to test the model (if available).
 
 ---
 
+## 🖥️ Web Interface
+
+ModelHub MCP includes a modern web interface for testing all functionality. The UI is built with HTML, JavaScript, and Tailwind CSS, providing an intuitive way to:
+
+- Run model inference with different providers and modalities
+- Compare multiple models with various metrics
+- Fetch demo URLs for models
+
+To access the UI:
+
+1. Start the server:
+
+```bash
+npm run dev
+```
+
+2. Open your browser and navigate to `http://localhost:3000`
+
+The interface features:
+
+- Clean, modern design with Tailwind CSS
+- Tabbed interface for different functionalities
+- Real-time API response display
+- Input validation and error handling
+- Responsive layout for desktop and mobile
+
+---
+
 ## 🌐 Protocol & Transport
 
 - **Protocol**: [Model Context Protocol (MCP)](https://mcp.so)
