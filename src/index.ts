@@ -1,8 +1,12 @@
 import express from 'express';
 import path from 'path';
+import dotenv from 'dotenv';
 import inferenceRouter from './routes/inference';
 import compareRouter from './routes/compare';
 import demoRouter from './routes/demo';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
